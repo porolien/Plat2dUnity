@@ -6,6 +6,8 @@ using UnityEngine.InputSystem;
 public class PlayerMovement : MonoBehaviour
 {
     Rigidbody2D rb = null;
+    [SerializeField] private PlayerInput playerInput = null;
+    public PlayerInput PlayerInput => playerInput;
     Vector2 movement = Vector2.zero;
     public float speed = 0;
     public float dashTime = 0.1f; 
