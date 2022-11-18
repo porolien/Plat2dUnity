@@ -19,6 +19,7 @@ public class Rebind : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // En utilisant un tuto de DapperDino
         string rebinds = PlayerPrefs.GetString(RebindsKey, string.Empty);
 
         if (string.IsNullOrEmpty(rebinds)) 
@@ -56,7 +57,6 @@ public class Rebind : MonoBehaviour
     }
     private void RebindComplete()
     {
-        Debug.Log("cheh");
         int bindingIndex = jumpAction.action.GetBindingIndexForControl(jumpAction.action.controls[0]);
 
         bindingDisplayNameText.text = InputControlPath.ToHumanReadableString(
