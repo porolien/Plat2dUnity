@@ -2,12 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class PlayerMovement : MonoBehaviour
 {
     Rigidbody2D rb = null;
     [SerializeField] private PlayerInput playerInput = null;
     public PlayerInput PlayerInput => playerInput;
+    Transform myTransform;
+    SpriteRenderer renderer = null;
 
     public Transform ProjectilePosition;
     public float AtkSpeedProjectile;
@@ -21,20 +24,22 @@ public class PlayerMovement : MonoBehaviour
     private int dashKeyRight;
     private int dashKeyLeft;
     private bool dashFinish = true;
-    private bool hasJumped;
-    private int ChangeJumpDirection;
+    private bool hasJumped = true;
+    private int ChangeJumpDirection = 0;
     private bool StopMovement;
+    private bool JumpWall = false;
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        
-
+        myTransform = GetComponent<Transform>();
+        renderer = GetComponent<SpriteRenderer>();
     }
 
     // Update is called once per frame
     void Update()
     {
+       
         if (dashFinish == true)
         {
             if (dashKeyRight == 2)
@@ -48,9 +53,17 @@ public class PlayerMovement : MonoBehaviour
                 Debug.Log(rb.velocity);
                 StartCoroutine(DashTiming());
             }
+            else if (JumpWall)
+            {
+                rb.velocity = new Vector2(movement.x * speed, -);
+            }
             else if (StopMovement == false)
             {
                 rb.velocity = new Vector2(movement.x * speed, rb.velocity.y);
+                if (movement.x != 0)
+                {
+                    renderer.flipX = movement.x < 0;
+                }
             }
         }
         
@@ -64,14 +77,16 @@ public class PlayerMovement : MonoBehaviour
                 float pressed = jumpValue.Get<float>();
 
                 rb.velocity = new Vector2(rb.velocity.x, 0);
-                rb.AddForce(new Vector2(0, 10), ForceMode2D.Impulse);
+                rb.AddForce(new Vector2(0, 15), ForceMode2D.Impulse);
                 hasJumped = true;
             }
             else
             {
                 StopMovement = true;
+                JumpWall = false;
                 rb.velocity = new Vector2(0, 0);
-                rb.AddForce(new Vector2(ChangeJumpDirection * 10, 10), ForceMode2D.Impulse);
+                rb.AddForce(new Vector2(ChangeJumpDirection * 10, 15), ForceMode2D.Impulse);
+                renderer.flipX = ChangeJumpDirection < 0;
                 hasJumped = true;
                 ChangeJumpDirection = 0;
                 StartCoroutine(StopMovementTiming());
@@ -121,6 +136,11 @@ public class PlayerMovement : MonoBehaviour
             CancelInvoke("RegenMana");
         }
     }
+    void Die() 
+    {
+        Debug.Log("ouch");
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
     private IEnumerator DashTiming()
     {
         dashFinish = false;
@@ -152,21 +172,30 @@ public class PlayerMovement : MonoBehaviour
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        Debug.Log(collision.GetContact(0).normal.y);
-
-        if (collision.GetContact(0).normal.y > 0.8f)
+        if (collision.gameObject.tag == "Ennemy")
         {
-            hasJumped = false;
+            Die();
         }
-        else if (collision.GetContact(0).normal.x < 0)
+        else
         {
-            hasJumped = false;
-            ChangeJumpDirection = -1;
-        }
-        else if (collision.GetContact(0).normal.x > 0)
-        {
-            hasJumped = false;
-            ChangeJumpDirection = 1;
+            if (collision.GetContact(0).normal.y > 0.8f)
+            {
+                hasJumped = false;
+                ChangeJumpDirection = 0;
+                JumpWall = false;
+            }
+            else if (collision.GetContact(0).normal.x < 0 && !(collision.GetContact(0).normal.y > 0.8f))
+            {
+                hasJumped = false;
+                ChangeJumpDirection = -1;
+                JumpWall = true;
+            }
+            else if (collision.GetContact(0).normal.x > 0 && !(collision.GetContact(0).normal.y > 0.8f))
+            {
+                hasJumped = false;
+                ChangeJumpDirection = 1;
+                JumpWall = true;
+            }
         }
 
     }
