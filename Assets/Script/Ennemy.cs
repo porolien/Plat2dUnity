@@ -36,7 +36,7 @@ public class Ennemy : MonoBehaviour
         {
             ChasePlayer();
         }
-        rb.velocity = new Vector2(speed, 0);
+        rb.velocity = new Vector2(speed, rb.velocity.y);
         if (-1 * speed != 0)
         {
             renderer.flipX =  speed < 0;
@@ -61,7 +61,10 @@ public class Ennemy : MonoBehaviour
         }
         if (hole || wall)
         {
+            
             rb.AddForce(new Vector2(0, 15), ForceMode2D.Impulse);
+            hole = false;
+            wall = false;
         }
     }
     private void OnTriggerEnter2D(Collider2D collision)
@@ -76,6 +79,15 @@ public class Ennemy : MonoBehaviour
                 Destroy(gameObject);
             }
         }
+        if (collision.tag == "Hole")
+        {
+            hole = true;
+        }
+        if (collision.tag == "Wall")
+        {
+            Debug.Log("Hello");
+            wall = true;
+        }
         else
         {
             speed = speed * -1;
@@ -83,7 +95,7 @@ public class Ennemy : MonoBehaviour
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        Debug.Log(collision.GetContact(0).normal.x);
+       
         if (collision.GetContact(0).normal.x > 0.5)
         {
             
