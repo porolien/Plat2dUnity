@@ -21,8 +21,10 @@ public class PlayerMovement : MonoBehaviour
     Vector2 movement = Vector2.zero;
     public float speed = 0;
     public float dashTime = 0.1f;
+    public float test = 0;
     private int dashKeyRight;
     private int dashKeyLeft;
+    private int dashKeyDown;
     private bool dashFinish = true;
     private bool hasJumped = true;
     private int ChangeJumpDirection = 0;
@@ -39,7 +41,7 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-       
+        
         if (dashFinish == true)
         {
             if (dashKeyRight == 2)
@@ -50,7 +52,11 @@ public class PlayerMovement : MonoBehaviour
             else if (dashKeyLeft == 2)
             {
                 rb.velocity = new Vector2(speed * -5 , rb.velocity.y);
-                Debug.Log(rb.velocity);
+                StartCoroutine(DashTiming());
+            }
+            else if (dashKeyDown == 2)
+            {
+                rb.velocity = new Vector2(rb.velocity.x, speed * -5);
                 StartCoroutine(DashTiming());
             }
             else if (JumpWall)
@@ -107,23 +113,39 @@ public class PlayerMovement : MonoBehaviour
             {
                 InvokeRepeating("RegenMana", 2f, 2f);
             }
-            int direction()
+            int direction = 1;
+            if (renderer.flipX)
             {
-                if (transform.localScale.x < 0f)
-                {
-                    return -1;
-                }
-                else
-                {
-                    return +1;
-                }
+                direction = -1;
             }
-            GameObject newprojectile = Instantiate(ProjectileSand, ProjectilePosition.position, Quaternion.identity);
-            newprojectile.GetComponent<Rigidbody2D>().velocity = new Vector2(AtkSpeedProjectile * direction() * Time.fixedDeltaTime, 0f);
-            newprojectile.transform.localScale = new Vector2(newprojectile.transform.localScale.x * direction(), newprojectile.transform.localScale.y);
+            GameObject newProjectile = Instantiate(ProjectileSand, new Vector2(ProjectilePosition.position.x, ProjectilePosition.position.y), Quaternion.identity);
+            StartCoroutine(ChangeProjectileDirection(newProjectile, direction));
             mana = mana -1;
             Debug.Log(mana);
         }
+    }
+
+    private IEnumerator ChangeProjectileDirection(GameObject Projectile, int Direction)
+    {
+        Projectile.GetComponent<Rigidbody2D>().velocity = new Vector2(AtkSpeedProjectile * Direction * Time.fixedDeltaTime, 5f);
+        Debug.Log(Projectile.transform.localScale.x * Direction + Projectile.transform.localScale.y + Projectile.transform.localScale.z);
+        Projectile.transform.rotation = Quaternion.Euler(0, 0, 45);
+        yield return new WaitForSeconds(0.4f);
+        Projectile.GetComponent<Rigidbody2D>().velocity = new Vector2(AtkSpeedProjectile * Direction * Time.fixedDeltaTime, 0f);
+        Projectile.transform.rotation = Quaternion.Euler(0, 0, 18);
+        yield return new WaitForSeconds(0.05f);
+        Projectile.GetComponent<Rigidbody2D>().velocity = new Vector2(AtkSpeedProjectile * Direction * Time.fixedDeltaTime, 0f);
+        Projectile.transform.rotation = Quaternion.Euler(0 , 0, 0);
+        yield return new WaitForSeconds(0.05f);
+        Projectile.GetComponent<Rigidbody2D>().velocity = new Vector2(AtkSpeedProjectile * Direction * Time.fixedDeltaTime, 0f);
+        Projectile.transform.rotation = Quaternion.Euler(0, 0, -18);
+        yield return new WaitForSeconds(0.05f);
+        Projectile.GetComponent<Rigidbody2D>().velocity = new Vector2(AtkSpeedProjectile * Direction * Time.fixedDeltaTime, -5f);
+        Projectile.transform.rotation = Quaternion.Euler(0, 0, -45);
+    }
+    void OnChangeDay()
+    {
+
     }
     void RegenMana()
     {
@@ -148,21 +170,31 @@ public class PlayerMovement : MonoBehaviour
         dashFinish = true;
         dashKeyRight = 0;
         dashKeyLeft = 0;
+        dashKeyDown = 0;
     }
     private IEnumerator DashCoroutine(InputValue moveValue)
     {
         if (moveValue.Get<Vector2>().x < 0)
         {
             dashKeyRight = 0;
+            dashKeyDown = 0;
             dashKeyLeft++;
         }
         if (moveValue.Get<Vector2>().x > 0)
         {
             dashKeyLeft = 0;
+            dashKeyDown = 0;
             dashKeyRight++;
+        }
+        if(moveValue.Get<Vector2>().y < 0)
+        {
+            dashKeyRight = 0;
+            dashKeyLeft = 0;
+            dashKeyDown++;
         }
             yield return new WaitForSeconds(0.3f);
         dashKeyRight = 0;
+        dashKeyDown = 0;
         dashKeyLeft = 0;
     }
     private IEnumerator StopMovementTiming()

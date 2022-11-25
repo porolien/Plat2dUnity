@@ -1427,6 +1427,10 @@ PrefabInstance:
       propertyPath: speed
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 6964814723531236407, guid: 19119f3f013f494468bb949719692ca5, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6964814723531236408, guid: 19119f3f013f494468bb949719692ca5, type: 3}
       propertyPath: m_Name
       value: Ennemy (4)
@@ -2363,7 +2367,7 @@ SpriteRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2111905297}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -2498,6 +2502,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2400609135048761907, guid: 63575cd8c5e9f194f9af9d66e7e4490a, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.204
+      objectReference: {fileID: 0}
     - target: {fileID: 2400609135953904017, guid: 63575cd8c5e9f194f9af9d66e7e4490a, type: 3}
       propertyPath: m_Size.x
       value: 0.29841614
@@ -2537,6 +2545,10 @@ PrefabInstance:
     - target: {fileID: 2400609135953904022, guid: 63575cd8c5e9f194f9af9d66e7e4490a, type: 3}
       propertyPath: m_GravityScale
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2400609135953904023, guid: 63575cd8c5e9f194f9af9d66e7e4490a, type: 3}
+      propertyPath: test
+      value: 180
       objectReference: {fileID: 0}
     - target: {fileID: 2400609135953904106, guid: 63575cd8c5e9f194f9af9d66e7e4490a, type: 3}
       propertyPath: m_RootOrder
@@ -2613,7 +2625,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6964814723531236407, guid: 19119f3f013f494468bb949719692ca5, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6964814723531236408, guid: 19119f3f013f494468bb949719692ca5, type: 3}
       propertyPath: m_Name
