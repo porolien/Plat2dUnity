@@ -18,12 +18,31 @@ public class Platform : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            Invoke("Fall", fallDelay);
+            Invoke("Fall", fallDelay); 
         }
+
     }
 
     void Fall()
     {
         rb2d.isKinematic = false;
+    }
+
+   /* private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (other.gameObject.Tag == "Sol")
+        {
+            Destroy(gameObject);
+        }
+
+    }*/
+
+    void onColliderEnter(Collider2D other)
+    {
+        if (other.gameObject.tag == "Sol")
+        {
+            //other.gameObject.SetActive(false);
+            Destroy(other.gameObject);
+        }
     }
 }
