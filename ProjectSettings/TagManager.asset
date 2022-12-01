@@ -8,6 +8,7 @@ TagManager:
   - Ennemy
   - Wall
   - Hole
+  - Sol
   layers:
   - Default
   - TransparentFX
