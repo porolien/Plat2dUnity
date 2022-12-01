@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class PlayerMovement : MonoBehaviour
 {
+    [SerializeField] private TMP_Text TimerText = null;
     Rigidbody2D rb = null;
     [SerializeField] private PlayerInput playerInput = null;
     public PlayerInput PlayerInput => playerInput;
@@ -30,6 +32,11 @@ public class PlayerMovement : MonoBehaviour
     private int ChangeJumpDirection = 0;
     private bool StopMovement;
     private bool JumpWall = false;
+    private bool IsSliding = true;
+    private bool IsBuried = false;
+    private float Timer = 0f;
+    private string timerString = "";
+    //private bool IsWaiting
     // Start is called before the first frame update
     void Start()
     {
@@ -41,7 +48,9 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        int myInt = 120 - (int)Time.timeSinceLevelLoad;
+        timerString = "" + (myInt);
+        TimerText.text = timerString;
         if (dashFinish == true)
         {
             if (dashKeyRight == 2)
@@ -51,7 +60,7 @@ public class PlayerMovement : MonoBehaviour
             }
             else if (dashKeyLeft == 2)
             {
-                rb.velocity = new Vector2(speed * -5 , rb.velocity.y);
+                rb.velocity = new Vector2(speed * -5, rb.velocity.y);
                 StartCoroutine(DashTiming());
             }
             else if (dashKeyDown == 2)
@@ -65,27 +74,54 @@ public class PlayerMovement : MonoBehaviour
             }
             else if (StopMovement == false)
             {
-                rb.velocity = new Vector2(movement.x * speed, rb.velocity.y);
-                if (movement.x != 0)
+                if (IsSliding)
                 {
-                    renderer.flipX = movement.x < 0;
+                    rb.velocity = new Vector2(movement.x * speed, rb.velocity.y);
+                    int ChangeDirectionForce = 1;
+                    if(speed < 0)
+                    {
+                        ChangeDirectionForce = -1;
+                    }
+                    rb.AddForce(new Vector2(5 * ChangeDirectionForce, 0), ForceMode2D.Impulse);
+                    //StartCoroutine(FrozedForces());
+                }
+                if (IsBuried)
+                {
+                    rb.velocity = new Vector2(movement.x * speed/3, rb.velocity.y);
+                }
+                else
+                {
+                    rb.velocity = new Vector2(movement.x * speed, rb.velocity.y);
+                    if (movement.x != 0)
+                    {
+                        renderer.flipX = movement.x < 0;
+                    }
                 }
             }
         }
-        
+
     }
     void OnJump(InputValue jumpValue)
     {
         if (!hasJumped)
         {
-            if (ChangeJumpDirection == 0)
+            if (IsBuried)
+            {
+                rb.velocity = new Vector2(rb.velocity.x, 0);
+                rb.AddForce(new Vector2(0, 5), ForceMode2D.Impulse);
+                Debug.Log(rb.velocity);
+                hasJumped = true;
+            }
+            else if (ChangeJumpDirection == 0)
             {
                 float pressed = jumpValue.Get<float>();
 
                 rb.velocity = new Vector2(rb.velocity.x, 0);
                 rb.AddForce(new Vector2(0, 15), ForceMode2D.Impulse);
                 hasJumped = true;
+                IsSliding = false;
             }
+            
             else
             {
                 StopMovement = true;
@@ -99,14 +135,26 @@ public class PlayerMovement : MonoBehaviour
             }
         }
     }
+    private IEnumerator StopMovementTiming()
+    {
+        yield return new WaitForSeconds(0.3f);
+        StopMovement = false;
+    }
     void OnMovement(InputValue moveValue)
     {
         StartCoroutine(DashCoroutine(moveValue));
-        movement = moveValue.Get<Vector2>();
+        if (IsSliding)
+        {
+            movement = moveValue.Get<Vector2>() * 1.5f;
+        }
+        else
+        {
+            movement = moveValue.Get<Vector2>();
+        }
     }
     void OnAttack(InputValue attackValue)
     {
-        
+
         if (mana != 0)
         {
             if (mana == 5 && !IsInvoking("RegenMana"))
@@ -120,7 +168,7 @@ public class PlayerMovement : MonoBehaviour
             }
             GameObject newProjectile = Instantiate(ProjectileSand, new Vector2(ProjectilePosition.position.x, ProjectilePosition.position.y), Quaternion.identity);
             StartCoroutine(ChangeProjectileDirection(newProjectile, direction));
-            mana = mana -1;
+            mana = mana - 1;
             Debug.Log(mana);
         }
     }
@@ -135,7 +183,7 @@ public class PlayerMovement : MonoBehaviour
         Projectile.transform.rotation = Quaternion.Euler(0, 0, 18);
         yield return new WaitForSeconds(0.05f);
         Projectile.GetComponent<Rigidbody2D>().velocity = new Vector2(AtkSpeedProjectile * Direction * Time.fixedDeltaTime, 0f);
-        Projectile.transform.rotation = Quaternion.Euler(0 , 0, 0);
+        Projectile.transform.rotation = Quaternion.Euler(0, 0, 0);
         yield return new WaitForSeconds(0.05f);
         Projectile.GetComponent<Rigidbody2D>().velocity = new Vector2(AtkSpeedProjectile * Direction * Time.fixedDeltaTime, 0f);
         Projectile.transform.rotation = Quaternion.Euler(0, 0, -18);
@@ -158,7 +206,7 @@ public class PlayerMovement : MonoBehaviour
             CancelInvoke("RegenMana");
         }
     }
-    void Die() 
+    void Die()
     {
         Debug.Log("ouch");
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
@@ -186,24 +234,25 @@ public class PlayerMovement : MonoBehaviour
             dashKeyDown = 0;
             dashKeyRight++;
         }
-        if(moveValue.Get<Vector2>().y < 0)
+        if (moveValue.Get<Vector2>().y < 0)
         {
             dashKeyRight = 0;
             dashKeyLeft = 0;
             dashKeyDown++;
         }
-            yield return new WaitForSeconds(0.3f);
+        yield return new WaitForSeconds(0.3f);
         dashKeyRight = 0;
         dashKeyDown = 0;
         dashKeyLeft = 0;
     }
-    private IEnumerator StopMovementTiming()
-    {
-        yield return new WaitForSeconds(0.3f);
-        StopMovement = false;
-    }
+    
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        if (collision.gameObject.name == "FrozedGround")
+        {
+            IsSliding = true;
+        }
+
         if (collision.gameObject.tag == "Ennemy")
         {
             Die();
@@ -230,6 +279,39 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
+    }
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.name == "FrozedGround")
+        {
+            IsSliding = false;
+        }
+    }
+    private void OnTriggerEnter2D(Collider2D triggered)
+    {
+        if (triggered.gameObject.name == "Quicksands")
+        {
+            hasJumped = false;
+            IsBuried = true;
+            InvokeRepeating("JumpBuried", 0.2f, 0.2f);
+        }
+    }
+    private void OnTriggerExit2D(Collider2D triggered)
+    {
+        Debug.Log("sands");
+        if (triggered.gameObject.name == "Quicksands")
+        { 
+            IsBuried = false;
+            CancelInvoke();
+        }
+    }
+
+    private void JumpBuried()
+    {
+        if (IsBuried)
+        {
+            hasJumped = false;
+        }
     }
 
 }

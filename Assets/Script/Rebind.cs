@@ -26,7 +26,6 @@ public class Rebind : MonoBehaviour
         {
             return; 
         }
-        Debug.Log("we are");
         playerMovement.PlayerInput.actions.LoadBindingOverridesFromJson(rebinds);
 
         int bindingIndex = jumpAction.action.GetBindingIndexForControl(jumpAction.action.controls[0]);

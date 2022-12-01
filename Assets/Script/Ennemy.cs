@@ -11,6 +11,8 @@ public class Ennemy : MonoBehaviour
     public float speed = 0;
     private bool hole = false;
     private bool wall = false;
+    private bool ChasePlayer = false;
+    private bool WalkOnWall = false;
     SpriteRenderer renderer = null;
     // Start is called before the first frame update
     void Start()
@@ -28,13 +30,31 @@ public class Ennemy : MonoBehaviour
         {
             targetPlayer = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
         }
-        if ((targetPlayer.position.x < EnnemyTransform.position.x) && (targetPlayer.position.x - EnnemyTransform.position.x < 5000))
+        if (ChasePlayer)
         {
-            ChasePlayer();
+            
+            if(((targetPlayer.position.x < EnnemyTransform.position.x) && (targetPlayer.position.x - EnnemyTransform.position.x < -30)) || ((targetPlayer.position.x > EnnemyTransform.position.x) && (EnnemyTransform.position.x - targetPlayer.position.x < -30)))
+            {
+                ChasePlayer = false;
+                speed = 5;
+            }
+            if (WalkOnWall)
+            {
+                rb.velocity = new Vector2(0, 5);
+            }
+            else
+            {
+                ChasePlayers();
+
+            }
         }
-        if ((targetPlayer.position.x > EnnemyTransform.position.x) && (EnnemyTransform.position.x - targetPlayer.position.x < 5000))
+        else
         {
-            ChasePlayer();
+            if (((targetPlayer.position.x < EnnemyTransform.position.x) && (targetPlayer.position.x - EnnemyTransform.position.x > -20)) || ((targetPlayer.position.x > EnnemyTransform.position.x) && (EnnemyTransform.position.x - targetPlayer.position.x > -20)))
+            {
+                Debug.Log("lesle");
+                ChasePlayer = true;
+            }
         }
         rb.velocity = new Vector2(speed, rb.velocity.y);
         if (-1 * speed != 0)
@@ -42,7 +62,7 @@ public class Ennemy : MonoBehaviour
             renderer.flipX =  speed < 0;
         }
     }
-    void ChasePlayer()
+    void ChasePlayers()
     {
         speed = 15;
         if (targetPlayer.position.x < EnnemyTransform.position.x)
@@ -85,7 +105,6 @@ public class Ennemy : MonoBehaviour
         }
         if (collision.tag == "Wall")
         {
-            Debug.Log("Hello");
             wall = true;
         }
         else
@@ -107,6 +126,19 @@ public class Ennemy : MonoBehaviour
 
             speed = speed * -1;
             renderer.flipX = -1 * speed < 0;
+        }
+        if (((collision.GetContact(0).normal.x < 0) ||(collision.GetContact(0).normal.x > 0)) && ChasePlayer )
+        {
+           
+            WalkOnWall = true;
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (WalkOnWall)
+        {
+            WalkOnWall = false;
         }
     }
 }
