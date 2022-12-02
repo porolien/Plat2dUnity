@@ -9,6 +9,7 @@ TagManager:
   - Wall
   - Hole
   - Sol
+  - Platforme
   layers:
   - Default
   - TransparentFX

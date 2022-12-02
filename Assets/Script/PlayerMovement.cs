@@ -14,6 +14,8 @@ public class PlayerMovement : MonoBehaviour
     Transform myTransform;
     SpriteRenderer renderer = null;
 
+    public DeadStoryteller DeadCounter;
+
     public Transform ProjectilePosition;
     public float AtkSpeedProjectile;
     public GameObject ProjectileSand;
@@ -210,6 +212,8 @@ public class PlayerMovement : MonoBehaviour
     {
         Debug.Log("ouch");
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+
+        DeadCounter.mort = +1;    
     }
     private IEnumerator DashTiming()
     {
