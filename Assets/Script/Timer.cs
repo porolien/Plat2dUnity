@@ -6,8 +6,9 @@ using TMPro;
 public class Timer : MonoBehaviour
 {
     public TMP_Text TimerText = null;
-    private int TimerDelay = 120;
+    public int TimerDelay = 120;
     private string TimerInString = "";
+    public PlayerMovement Player;
     // Start is called before the first frame update
     void Start()
     {
@@ -20,6 +21,10 @@ public class Timer : MonoBehaviour
         int TimerInSeconds = TimerDelay - (int)Time.timeSinceLevelLoad;
         TimerInString = "" + (TimerInSeconds);
         TimerText.text = TimerInString;
+        if(TimerInSeconds == 0)
+        {
+            Player.Die();
+        }
 
     }
 }

@@ -9,6 +9,8 @@ TagManager:
   - Wall
   - Hole
   - Sol
+  - PlayerProjectile
+  - EnnemyProjectile
   layers:
   - Default
   - TransparentFX

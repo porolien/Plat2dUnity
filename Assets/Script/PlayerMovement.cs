@@ -35,9 +35,11 @@ public class PlayerMovement : MonoBehaviour
     private bool IsSliding = false;
     private bool IsBuried = false;
     private float SensMouvement;
-    private int a;
     private bool frozen;
     private bool Moving = false;
+    private int frozedCount = 0;
+    private bool CanBreakIce = false;
+
 
     //private bool IsWaiting
     // Start is called before the first frame update
@@ -51,6 +53,7 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Debug.Log(speed);
        
         if (dashFinish == true)
         {
@@ -66,6 +69,7 @@ public class PlayerMovement : MonoBehaviour
             }
             else if (dashKeyDown == 2)
             {
+                CanBreakIce = true;
                 rb.velocity = new Vector2(rb.velocity.x, speed * -5);
                 StartCoroutine(DashTiming());
             }
@@ -87,7 +91,7 @@ public class PlayerMovement : MonoBehaviour
                         rb.AddForce(new Vector2(5 * ChangeDirectionForce, 0), ForceMode2D.Impulse);
                         StartCoroutine(FrozedForces());
                     */
-                    rb.velocity = new Vector2(movement.x * speed, rb.velocity.y);
+                    rb.velocity = new Vector2(movement.x * speed*1.2f, rb.velocity.y);
                 }
                 if (IsBuried)
                 {
@@ -109,6 +113,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (!hasJumped)
         {
+            Moving = true;
             if (IsBuried)
             {
                 rb.velocity = new Vector2(rb.velocity.x, 1);
@@ -154,27 +159,28 @@ public class PlayerMovement : MonoBehaviour
 
                   case -1:
                     Moving = true;
-                    if (SensMouvement == 1)
-                    {
-                        
-                    }
+                    frozedCount++;
+                    speed = 10;
                       break;
                   case 0:
+                    frozedCount++;
                     Moving = false;
-                      if (SensMouvement != 0)
-                      {
+                    if (SensMouvement != 0)
+                    {
                         movement.x = SensMouvement;
-                      }
+                    }
                       break;
                   case 1:
                     Moving = true;
-                    if (SensMouvement == -1)
-                      {
-                        
-                    }
+                    frozedCount++;
+                    speed = 10;
                       break;
               }
             SensMouvement = moveValue.Get<Vector2>().x;
+            if (Moving)
+            {
+                movement = moveValue.Get<Vector2>();
+            }
             StartCoroutine(FrozedForces());
            
            
@@ -240,7 +246,7 @@ public class PlayerMovement : MonoBehaviour
             CancelInvoke("RegenMana");
         }
     }
-    void Die()
+    public void Die()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
@@ -252,6 +258,7 @@ public class PlayerMovement : MonoBehaviour
         dashKeyRight = 0;
         dashKeyLeft = 0;
         dashKeyDown = 0;
+        CanBreakIce = false;
     }
     private IEnumerator DashCoroutine(InputValue moveValue)
     {
@@ -282,47 +289,71 @@ public class PlayerMovement : MonoBehaviour
     {
         if (!frozen)
         {
+            int thisFrozedCount = frozedCount; 
             float SlidingWhileNotMoving = 0.6f;
             frozen = true;
-            speed = 7;
-            yield return new WaitForSeconds(SlidingWhileNotMoving);
             if (Moving)
+            {
+                speed = 10;
+                SlidingWhileNotMoving = 0f;
+            }
+            else
+            {
+                speed = 7;
+            }
+            
+            yield return new WaitForSeconds(SlidingWhileNotMoving);
+            if (Moving || frozedCount != thisFrozedCount)
             {
                 SlidingWhileNotMoving = 0;
             }
             else
             {
-                SlidingWhileNotMoving = 0.6f;
+                SlidingWhileNotMoving = 0.4f;
                 speed = 5;
             }
             yield return new WaitForSeconds(SlidingWhileNotMoving);
-            if (Moving)
+            if (Moving || frozedCount != thisFrozedCount)
             {
                 SlidingWhileNotMoving = 0;
             }
             else
             {
-                SlidingWhileNotMoving = 0.6f;
+                SlidingWhileNotMoving = 0.2f;
                 speed = 2;
             }
             yield return new WaitForSeconds(SlidingWhileNotMoving);
-            if (Moving)
+            if (Moving || frozedCount != thisFrozedCount)
             {
                 SlidingWhileNotMoving = 0;
             }
             else
             {
-                SlidingWhileNotMoving = 0.6f;
+                SlidingWhileNotMoving = 0f;
                 speed = 0;
             }
             frozen = false;
         }
         
     }
-    
+    private IEnumerator ExitSlindingTiming()
+    {
+        yield return new WaitForSeconds(0.2f);
+        if (frozen)
+        {
+            IsSliding = false;
+        }
+        
+    }
+
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        
+        IsSliding = false;
+        if(collision.gameObject.tag == "BreakableIce" && CanBreakIce)
+        {
+            Destroy(collision.gameObject);
+        }
         if (collision.gameObject.name == "FrozedGround")
         {
             IsSliding = true;
@@ -359,7 +390,8 @@ public class PlayerMovement : MonoBehaviour
     {
         if (collision.gameObject.name == "FrozedGround")
         {
-            IsSliding = false;
+            StartCoroutine(ExitSlindingTiming());
+            
         }
     }
     private void OnTriggerEnter2D(Collider2D triggered)
