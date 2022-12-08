@@ -53,7 +53,7 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(speed);
+      
        
         if (dashFinish == true)
         {
