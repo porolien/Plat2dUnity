@@ -605,7 +605,11 @@ MonoBehaviour:
   jumpAction: {fileID: 6943381493114235010, guid: 855a46524a10e554689580e8fddf508b, type: 3}
   mouvementAction: {fileID: 164874545862151081, guid: 855a46524a10e554689580e8fddf508b, type: 3}
   playerMovement: {fileID: 216261539}
-  bindingDisplayNameText: {fileID: 1365519974}
+  jumpDisplayNameText: {fileID: 1365519974}
+  upDisplayNameText: {fileID: 1918972944}
+  downDisplayNameText: {fileID: 1631173385}
+  rightDisplayNameText: {fileID: 1242185069}
+  leftDisplayNameText: {fileID: 1171199470}
   startRebindObject: {fileID: 169622622}
   waitingForInputObject: {fileID: 1512795550}
   JumpButton: {fileID: 0}
@@ -2535,7 +2539,11 @@ MonoBehaviour:
   jumpAction: {fileID: 0}
   mouvementAction: {fileID: 0}
   playerMovement: {fileID: 216261539}
-  bindingDisplayNameText: {fileID: 1739368492}
+  jumpDisplayNameText: {fileID: 0}
+  upDisplayNameText: {fileID: 0}
+  downDisplayNameText: {fileID: 0}
+  rightDisplayNameText: {fileID: 0}
+  leftDisplayNameText: {fileID: 0}
   startRebindObject: {fileID: 169622622}
   waitingForInputObject: {fileID: 1512795550}
   JumpButton: {fileID: 169622623}

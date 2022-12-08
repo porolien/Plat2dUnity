@@ -54,10 +54,6 @@ public class Rebind : MonoBehaviour
     }
     public void StartRebinding(string ButtonRebind)
     {
-        Debug.Log(mouvementAction.action.controls[0]);
-        Debug.Log(mouvementAction.action.controls[1]);
-        Debug.Log(mouvementAction.action.controls[2]);
-        Debug.Log(mouvementAction.action.controls[3]);
         int controlsFromActions = 0;
         InputActionReference InputActionForRebind = null;
         TMP_Text bindingDisplayNameText = null;
@@ -115,10 +111,10 @@ public class Rebind : MonoBehaviour
         
         int bindingIndex = ActionForRebind.action.GetBindingIndexForControl(ActionForRebind.action.controls[TheControlsFromActions]);
         Debug.Log(bindingIndex);
-        bindingDisplayNameText.text = InputControlPath.ToHumanReadableString(
+        string QwertyCaracter = InputControlPath.ToHumanReadableString(
             ActionForRebind.action.bindings[bindingIndex].effectivePath,
             InputControlPath.HumanReadableStringOptions.OmitDevice);
-
+        bindingDisplayNameText.text = QwertyToAzerty(QwertyCaracter);
         rebindingOperation.Dispose();
 
         startRebindObject.SetActive(true);
@@ -127,5 +123,31 @@ public class Rebind : MonoBehaviour
         playerMovement.PlayerInput.SwitchCurrentActionMap("PlayerActions");
     }
 
+    private string QwertyToAzerty(string QwertyCaracterToAzerty)
+    {
+        
+        switch (QwertyCaracterToAzerty)
+        {
+            case "Q":
+                QwertyCaracterToAzerty = "A";
+                break;
+            case "W":
+                QwertyCaracterToAzerty = "Z";
+                break;
+            case "A":
+                QwertyCaracterToAzerty = "Q";
+                break;
+            case ";":
+                QwertyCaracterToAzerty = "M";
+                break;
+            case "Z":
+                QwertyCaracterToAzerty = "W";
+                break;
+            case "M":
+                QwertyCaracterToAzerty = ",";
+                break;
+        }
+        return QwertyCaracterToAzerty;
+    }
     
 }
