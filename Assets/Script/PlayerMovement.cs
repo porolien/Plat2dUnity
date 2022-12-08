@@ -1,13 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
-using TMPro;
 
 public class PlayerMovement : MonoBehaviour
 {
-    [SerializeField] private TMP_Text TimerText = null;
+    
     Rigidbody2D rb = null;
     [SerializeField] private PlayerInput playerInput = null;
     public PlayerInput PlayerInput => playerInput;
@@ -34,10 +34,15 @@ public class PlayerMovement : MonoBehaviour
     private int ChangeJumpDirection = 0;
     private bool StopMovement;
     private bool JumpWall = false;
-    private bool IsSliding = true;
+    private bool IsSliding = false;
     private bool IsBuried = false;
-    private float Timer = 0f;
-    private string timerString = "";
+    private float SensMouvement;
+    private bool frozen;
+    private bool Moving = false;
+    private int frozedCount = 0;
+    private bool CanBreakIce = false;
+
+
     //private bool IsWaiting
     // Start is called before the first frame update
     void Start()
@@ -50,9 +55,8 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        int myInt = 120 - (int)Time.timeSinceLevelLoad;
-        timerString = "" + (myInt);
-        TimerText.text = timerString;
+      
+       
         if (dashFinish == true)
         {
             if (dashKeyRight == 2)
@@ -67,6 +71,7 @@ public class PlayerMovement : MonoBehaviour
             }
             else if (dashKeyDown == 2)
             {
+                CanBreakIce = true;
                 rb.velocity = new Vector2(rb.velocity.x, speed * -5);
                 StartCoroutine(DashTiming());
             }
@@ -78,14 +83,17 @@ public class PlayerMovement : MonoBehaviour
             {
                 if (IsSliding)
                 {
-                    rb.velocity = new Vector2(movement.x * speed, rb.velocity.y);
-                    int ChangeDirectionForce = 1;
-                    if(speed < 0)
-                    {
-                        ChangeDirectionForce = -1;
-                    }
-                    rb.AddForce(new Vector2(5 * ChangeDirectionForce, 0), ForceMode2D.Impulse);
-                    //StartCoroutine(FrozedForces());
+
+                    //rb.velocity = new Vector2(movement.x * speed, rb.velocity.y);
+                    /*    int ChangeDirectionForce = 1;
+                        if(speed < 0)
+                        {
+                            ChangeDirectionForce = -1;
+                        }
+                        rb.AddForce(new Vector2(5 * ChangeDirectionForce, 0), ForceMode2D.Impulse);
+                        StartCoroutine(FrozedForces());
+                    */
+                    rb.velocity = new Vector2(movement.x * speed*1.2f, rb.velocity.y);
                 }
                 if (IsBuried)
                 {
@@ -107,9 +115,10 @@ public class PlayerMovement : MonoBehaviour
     {
         if (!hasJumped)
         {
+            Moving = true;
             if (IsBuried)
             {
-                rb.velocity = new Vector2(rb.velocity.x, 0);
+                rb.velocity = new Vector2(rb.velocity.x, 1);
                 rb.AddForce(new Vector2(0, 5), ForceMode2D.Impulse);
                 Debug.Log(rb.velocity);
                 hasJumped = true;
@@ -147,7 +156,38 @@ public class PlayerMovement : MonoBehaviour
         StartCoroutine(DashCoroutine(moveValue));
         if (IsSliding)
         {
-            movement = moveValue.Get<Vector2>() * 1.5f;
+              switch (moveValue.Get<Vector2>().x)
+              {
+
+                  case -1:
+                    Moving = true;
+                    frozedCount++;
+                    speed = 10;
+                      break;
+                  case 0:
+                    frozedCount++;
+                    Moving = false;
+                    if (SensMouvement != 0)
+                    {
+                        movement.x = SensMouvement;
+                    }
+                      break;
+                  case 1:
+                    Moving = true;
+                    frozedCount++;
+                    speed = 10;
+                      break;
+              }
+            SensMouvement = moveValue.Get<Vector2>().x;
+            if (Moving)
+            {
+                movement = moveValue.Get<Vector2>();
+            }
+            StartCoroutine(FrozedForces());
+           
+           
+           // movement = moveValue.Get<Vector2>() * 1.5f;
+            
         }
         else
         {
@@ -208,9 +248,8 @@ public class PlayerMovement : MonoBehaviour
             CancelInvoke("RegenMana");
         }
     }
-    void Die()
+    public void Die()
     {
-        Debug.Log("ouch");
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
 
         DeadCounter.mort = DeadCounter.mort  +1;
@@ -223,6 +262,7 @@ public class PlayerMovement : MonoBehaviour
         dashKeyRight = 0;
         dashKeyLeft = 0;
         dashKeyDown = 0;
+        CanBreakIce = false;
     }
     private IEnumerator DashCoroutine(InputValue moveValue)
     {
@@ -249,9 +289,75 @@ public class PlayerMovement : MonoBehaviour
         dashKeyDown = 0;
         dashKeyLeft = 0;
     }
-    
+    private IEnumerator FrozedForces()
+    {
+        if (!frozen)
+        {
+            int thisFrozedCount = frozedCount; 
+            float SlidingWhileNotMoving = 0.6f;
+            frozen = true;
+            if (Moving)
+            {
+                speed = 10;
+                SlidingWhileNotMoving = 0f;
+            }
+            else
+            {
+                speed = 7;
+            }
+            
+            yield return new WaitForSeconds(SlidingWhileNotMoving);
+            if (Moving || frozedCount != thisFrozedCount)
+            {
+                SlidingWhileNotMoving = 0;
+            }
+            else
+            {
+                SlidingWhileNotMoving = 0.4f;
+                speed = 5;
+            }
+            yield return new WaitForSeconds(SlidingWhileNotMoving);
+            if (Moving || frozedCount != thisFrozedCount)
+            {
+                SlidingWhileNotMoving = 0;
+            }
+            else
+            {
+                SlidingWhileNotMoving = 0.2f;
+                speed = 2;
+            }
+            yield return new WaitForSeconds(SlidingWhileNotMoving);
+            if (Moving || frozedCount != thisFrozedCount)
+            {
+                SlidingWhileNotMoving = 0;
+            }
+            else
+            {
+                SlidingWhileNotMoving = 0f;
+                speed = 0;
+            }
+            frozen = false;
+        }
+        
+    }
+    private IEnumerator ExitSlindingTiming()
+    {
+        yield return new WaitForSeconds(0.2f);
+        if (frozen)
+        {
+            IsSliding = false;
+        }
+        
+    }
+
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        IsSliding = false;
+        if(collision.gameObject.tag == "BreakableIce" && CanBreakIce)
+        {
+            Destroy(collision.gameObject);
+        }
         if (collision.gameObject.name == "FrozedGround")
         {
             IsSliding = true;
@@ -292,7 +398,8 @@ public class PlayerMovement : MonoBehaviour
     {
         if (collision.gameObject.name == "FrozedGround")
         {
-            IsSliding = false;
+            StartCoroutine(ExitSlindingTiming());
+            
         }
     }
     private void OnTriggerEnter2D(Collider2D triggered)
