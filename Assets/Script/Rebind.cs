@@ -18,12 +18,6 @@ public class Rebind : MonoBehaviour
     [SerializeField] private GameObject startRebindObject = null;
     [SerializeField] private GameObject waitingForInputObject = null;
 
-    public Button JumpButton = null;
-    public Button UpButton = null;
-    public Button DownButton = null;
-    public Button LeftButton = null;
-    public Button RightButton = null;
-
     private InputActionRebindingExtensions.RebindingOperation rebindingOperation;
 
     private const string RebindsKey = "rebinds";
