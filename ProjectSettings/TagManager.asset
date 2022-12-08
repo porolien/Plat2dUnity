@@ -10,6 +10,7 @@ TagManager:
   - Hole
   - Sol
   - Platforme
+  - ui
   layers:
   - Default
   - TransparentFX

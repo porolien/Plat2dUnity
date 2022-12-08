@@ -213,7 +213,7 @@ public class PlayerMovement : MonoBehaviour
         Debug.Log("ouch");
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
 
-        DeadCounter.mort = +1;    
+        DeadCounter.mort = DeadCounter.mort  +1;
     }
     private IEnumerator DashTiming()
     {
@@ -283,6 +283,10 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
+        if (collision.gameObject.tag == "Projectile")
+        {
+            Die();
+        }
     }
     private void OnCollisionExit2D(Collision2D collision)
     {

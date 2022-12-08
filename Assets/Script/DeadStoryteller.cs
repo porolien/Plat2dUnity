@@ -7,25 +7,28 @@ public class DeadStoryteller : MonoBehaviour
 {
     public int mort = 0;
 
-    public GameObject Die;
-
     public TMP_Text CounterDead;
+
+    Animation animation;
 
     void Start()
     {
+        animation = GetComponent<Animation>();
+
+        GameObject[] objs = GameObject.FindGameObjectsWithTag("ui");
+
+        if (objs.Length > 1)
+        {
+            Destroy(this.gameObject);
+        }
+        DontDestroyOnLoad(gameObject);
+        Debug.Log("treg");
 
     }
     void Update()
     {
         CounterDead.text =""+ mort;
-    }
 
-    void OnCollisionEnter2D(Collision2D other)
-    {
-        if (other.gameObject.CompareTag("Sol"))
-        { 
-            mort++;      
-        }
-        DontDestroyOnLoad(other.gameObject);
+       
     }
 }
