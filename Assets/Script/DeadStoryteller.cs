@@ -6,7 +6,6 @@ using TMPro;
 public class DeadStoryteller : MonoBehaviour
 {
     public int mort = 0;
-
     public TMP_Text CounterDead;
 
     Animation animation;
@@ -14,21 +13,12 @@ public class DeadStoryteller : MonoBehaviour
     void Start()
     {
         animation = GetComponent<Animation>();
-
-        GameObject[] objs = GameObject.FindGameObjectsWithTag("ui");
-
-        if (objs.Length > 1)
-        {
-            Destroy(this.gameObject);
-        }
-        DontDestroyOnLoad(gameObject);
-        Debug.Log("treg");
+        CounterDead.text = "" + PlayerPrefs.GetInt("deathCount");
 
     }
-    void Update()
+    public void ShowDeath()
     {
-        CounterDead.text =""+ mort;
-
-       
+        PlayerPrefs.SetInt("deathCount", PlayerPrefs.GetInt("deathCount") + 1);
+        CounterDead.text = "" + PlayerPrefs.GetInt("deathCount");
     }
 }

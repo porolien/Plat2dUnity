@@ -9,12 +9,16 @@ public class Rebind : MonoBehaviour
 {
     [SerializeField] private InputActionReference jumpAction = null;
     [SerializeField] private InputActionReference mouvementAction = null;
+    [SerializeField] private InputActionReference attackAction = null;
+    [SerializeField] private InputActionReference changeTimeAction = null;
     [SerializeField] private PlayerMovement playerMovement = null;
     [SerializeField] private TMP_Text jumpDisplayNameText = null;
     [SerializeField] private TMP_Text upDisplayNameText = null;
     [SerializeField] private TMP_Text downDisplayNameText = null;
     [SerializeField] private TMP_Text rightDisplayNameText = null;
     [SerializeField] private TMP_Text leftDisplayNameText = null;
+    [SerializeField] private TMP_Text attackDisplayNameText = null;
+    [SerializeField] private TMP_Text changeTimeDisplayNameText = null;
     [SerializeField] private GameObject startRebindObject = null;
     [SerializeField] private GameObject waitingForInputObject = null;
 
@@ -33,11 +37,28 @@ public class Rebind : MonoBehaviour
         }
         playerMovement.PlayerInput.actions.LoadBindingOverridesFromJson(rebinds);
 
-        int bindingIndex = jumpAction.action.GetBindingIndexForControl(jumpAction.action.controls[0]);
 
-        jumpDisplayNameText.text = InputControlPath.ToHumanReadableString(
-            jumpAction.action.bindings[bindingIndex].effectivePath,
-            InputControlPath.HumanReadableStringOptions.OmitDevice);
+        jumpDisplayNameText.text = QwertyToAzerty(InputControlPath.ToHumanReadableString(
+            jumpAction.action.bindings[jumpAction.action.GetBindingIndexForControl(jumpAction.action.controls[0])].effectivePath,
+            InputControlPath.HumanReadableStringOptions.OmitDevice));
+        attackDisplayNameText.text = QwertyToAzerty(InputControlPath.ToHumanReadableString(
+            attackAction.action.bindings[attackAction.action.GetBindingIndexForControl(attackAction.action.controls[0])].effectivePath,
+            InputControlPath.HumanReadableStringOptions.OmitDevice));
+        changeTimeDisplayNameText.text = QwertyToAzerty(InputControlPath.ToHumanReadableString(
+            changeTimeAction.action.bindings[changeTimeAction.action.GetBindingIndexForControl(changeTimeAction.action.controls[0])].effectivePath,
+            InputControlPath.HumanReadableStringOptions.OmitDevice));
+        upDisplayNameText.text = QwertyToAzerty(InputControlPath.ToHumanReadableString(
+            mouvementAction.action.bindings[mouvementAction.action.GetBindingIndexForControl(mouvementAction.action.controls[0])].effectivePath,
+            InputControlPath.HumanReadableStringOptions.OmitDevice));
+        downDisplayNameText.text = QwertyToAzerty(InputControlPath.ToHumanReadableString(
+            mouvementAction.action.bindings[mouvementAction.action.GetBindingIndexForControl(mouvementAction.action.controls[1])].effectivePath,
+            InputControlPath.HumanReadableStringOptions.OmitDevice));
+        rightDisplayNameText.text = QwertyToAzerty(InputControlPath.ToHumanReadableString(
+            mouvementAction.action.bindings[mouvementAction.action.GetBindingIndexForControl(mouvementAction.action.controls[2])].effectivePath,
+            InputControlPath.HumanReadableStringOptions.OmitDevice));
+        leftDisplayNameText.text = QwertyToAzerty(InputControlPath.ToHumanReadableString(
+            mouvementAction.action.bindings[mouvementAction.action.GetBindingIndexForControl(mouvementAction.action.controls[3])].effectivePath,
+            InputControlPath.HumanReadableStringOptions.OmitDevice));
     }
 
     public void Save()
@@ -78,8 +99,16 @@ public class Rebind : MonoBehaviour
                 controlsFromActions = 2;
                 bindingDisplayNameText = leftDisplayNameText;
                 break;
+            case "attack":
+                InputActionForRebind = attackAction;
+                bindingDisplayNameText = attackDisplayNameText;
+                break;
+            case "changeTime":
+                InputActionForRebind = changeTimeAction;
+                bindingDisplayNameText = changeTimeDisplayNameText;
+                break;
         }
-       startRebindObject.SetActive(false);
+        startRebindObject.SetActive(false);
         waitingForInputObject.SetActive(true);
         playerMovement.PlayerInput.SwitchCurrentActionMap("menu");
         if(InputActionForRebind == mouvementAction) 
@@ -104,10 +133,11 @@ public class Rebind : MonoBehaviour
     {
         
         int bindingIndex = ActionForRebind.action.GetBindingIndexForControl(ActionForRebind.action.controls[TheControlsFromActions]);
-        Debug.Log(bindingIndex);
+
         string QwertyCaracter = InputControlPath.ToHumanReadableString(
             ActionForRebind.action.bindings[bindingIndex].effectivePath,
             InputControlPath.HumanReadableStringOptions.OmitDevice);
+
         bindingDisplayNameText.text = QwertyToAzerty(QwertyCaracter);
         rebindingOperation.Dispose();
 

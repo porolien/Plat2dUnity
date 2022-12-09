@@ -9,14 +9,10 @@ TagManager:
   - Wall
   - Hole
   - Sol
-
-  - Platforme
+  - BreakableIce
+  - PlayerProjectile
+  - EnnemyProjectile
   - ui
-
-
-
-
-
   layers:
   - Default
   - TransparentFX

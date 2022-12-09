@@ -260,9 +260,8 @@ public class PlayerMovement : MonoBehaviour
     }
     public void Die()
     {
+        DeadCounter.ShowDeath();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-
-        DeadCounter.mort = DeadCounter.mort  +1;
     }
     private IEnumerator DashTiming()
     {
