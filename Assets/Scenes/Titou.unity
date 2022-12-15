@@ -7552,12 +7552,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   jumpAction: {fileID: 6943381493114235010, guid: 855a46524a10e554689580e8fddf508b, type: 3}
   mouvementAction: {fileID: 164874545862151081, guid: 855a46524a10e554689580e8fddf508b, type: 3}
+  attackAction: {fileID: 0}
+  changeTimeAction: {fileID: 0}
   playerMovement: {fileID: 0}
   jumpDisplayNameText: {fileID: 969914944}
   upDisplayNameText: {fileID: 1789615096}
   downDisplayNameText: {fileID: 126534058}
   rightDisplayNameText: {fileID: 532508140}
   leftDisplayNameText: {fileID: 284218838}
+  attackDisplayNameText: {fileID: 0}
+  changeTimeDisplayNameText: {fileID: 0}
   startRebindObject: {fileID: 0}
   waitingForInputObject: {fileID: 0}
 --- !u!1 &1588744461
@@ -7931,7 +7935,7 @@ Animator:
   m_GameObject: {fileID: 1611137390}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: dc81153f75e243e44bce0b77b3249a36, type: 2}
+  m_Controller: {fileID: 9100000, guid: e33a696c54a294e4391097c8e3566d55, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
