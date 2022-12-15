@@ -6,7 +6,7 @@ public class EnnemyShoot : MonoBehaviour
 {
 
 
-    public int Hp;
+    /*public int Hp;
 
     private Transform targetPlayer;
     private Transform EnnemyTransform;
@@ -86,5 +86,5 @@ public class EnnemyShoot : MonoBehaviour
                 Destroy(gameObject);
             }
         }
-    }
+    }*/
 }
