@@ -38,6 +38,7 @@ public class PlayerMovement : MonoBehaviour
     private bool IsBuried = false;
     private float SensMouvement;
     private bool frozen;
+    private bool BuriedJump;
     private bool Moving = false;
     private int frozedCount = 0;
     private bool CanBreakIce = false;
@@ -99,7 +100,15 @@ public class PlayerMovement : MonoBehaviour
                 }
                 if (IsBuried)
                 {
-                    rb.velocity = new Vector2(movement.x * speed/3, rb.velocity.y);
+                    if (BuriedJump)
+                    {
+                        rb.velocity = new Vector2(movement.x * speed / 3, rb.velocity.y);
+                    }
+                    else
+                    {
+                        rb.velocity = new Vector2(movement.x * speed / 3, 0.1f);
+                    }
+                    
                 }
                 else
                 {
@@ -124,6 +133,7 @@ public class PlayerMovement : MonoBehaviour
                 rb.AddForce(new Vector2(0, 5), ForceMode2D.Impulse);
                 Debug.Log(rb.velocity);
                 hasJumped = true;
+                BuriedJump = true;
             }
             else if (ChangeJumpDirection == 0)
             {
@@ -220,7 +230,6 @@ public class PlayerMovement : MonoBehaviour
     private IEnumerator ChangeProjectileDirection(GameObject Projectile, int Direction)
     {
         Projectile.GetComponent<Rigidbody2D>().velocity = new Vector2(AtkSpeedProjectile * Direction * Time.fixedDeltaTime, 5f);
-        Debug.Log(Projectile.transform.localScale.x * Direction + Projectile.transform.localScale.y + Projectile.transform.localScale.z);
         Projectile.transform.rotation = Quaternion.Euler(0, 0, 45);
         yield return new WaitForSeconds(0.4f);
         Projectile.GetComponent<Rigidbody2D>().velocity = new Vector2(AtkSpeedProjectile * Direction * Time.fixedDeltaTime, 0f);
@@ -254,11 +263,10 @@ public class PlayerMovement : MonoBehaviour
     }
     public void Die()
     {
+        DeadCounter.ShowDeath();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
 
-        DeadCounter.mort = DeadCounter.mort  +1;
 
-        animator.SetBool(DeadCounter.mort, true);
     }
     private IEnumerator DashTiming()
     {
@@ -419,7 +427,7 @@ public class PlayerMovement : MonoBehaviour
     }
     private void OnTriggerExit2D(Collider2D triggered)
     {
-        Debug.Log("sands");
+       
         if (triggered.gameObject.name == "Quicksands")
         { 
             IsBuried = false;
@@ -431,6 +439,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (IsBuried)
         {
+            BuriedJump = false;
             hasJumped = false;
         }
     }
