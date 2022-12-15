@@ -42,6 +42,8 @@ public class PlayerMovement : MonoBehaviour
     private int frozedCount = 0;
     private bool CanBreakIce = false;
 
+    public Animator animator;
+
 
     //private bool IsWaiting
     // Start is called before the first frame update
@@ -255,6 +257,8 @@ public class PlayerMovement : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
 
         DeadCounter.mort = DeadCounter.mort  +1;
+
+        animator.SetBool(DeadCounter.mort, true);
     }
     private IEnumerator DashTiming()
     {
