@@ -5,9 +5,7 @@ using UnityEngine;
 public class Platform : MonoBehaviour
 {
     public float fallDelay = 1f;
-
-    public GameObject aze;
-
+    private bool isFalling = false;
     private Rigidbody2D rb2d;
 
     void Awake()
@@ -17,19 +15,25 @@ public class Platform : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D other)
     {
-        if (other.gameObject.CompareTag("Player"))
+        if (other.gameObject.CompareTag("Player") && other.GetContact(0).normal.y < -0.8)
         {
-            Invoke("Fall", fallDelay); 
+            Invoke("Fall", fallDelay);
+            Debug.Log(other.GetContact(0).normal.y);
         }
 
-        if (other.gameObject.CompareTag("Sol"))
+        if (isFalling && (other.gameObject.tag != "Player" && other.gameObject.tag != "Ennemy"))
         {
-            Destroy(aze);
+            isFalling = false;
+            Destroy(gameObject);
         }
     }
 
     void Fall()
     {
-        rb2d.isKinematic = false;
+        isFalling = true;
+        rb2d.constraints = RigidbodyConstraints2D.None;
+        rb2d.constraints = RigidbodyConstraints2D.FreezePositionX;
+        rb2d.constraints = RigidbodyConstraints2D.FreezeRotation;
+        rb2d.velocity = new Vector2(0f, -3);
     }
 }
