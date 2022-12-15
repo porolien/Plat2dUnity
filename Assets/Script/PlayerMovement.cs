@@ -242,6 +242,8 @@ public class PlayerMovement : MonoBehaviour
         Projectile.GetComponent<Rigidbody2D>().velocity = new Vector2(AtkSpeedProjectile * Direction * Time.fixedDeltaTime, -5f);
         Projectile.transform.rotation = Quaternion.Euler(0, 0, -45);
     }
+
+
     void OnChangeDay()
     {
 

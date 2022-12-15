@@ -15,6 +15,7 @@ public class EnnemyShoot : Ennemy
     {
         EnnemyTransform = GetComponent<Transform>();
         targetPlayer = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
+
     }
 
 
@@ -43,6 +44,7 @@ public class EnnemyShoot : Ennemy
             Attack(checkX, checkY);
         }
         
+
     }
     
 
