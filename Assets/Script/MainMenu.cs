@@ -19,6 +19,9 @@ public class MainMenu : MonoBehaviour
 
     public GameObject GraphiqueWindow;
 
+    bool fghj;
+
+
     /*public void StartGame()
     {
         SceneManager.LoadScene(levelToload);
@@ -61,33 +64,32 @@ public class MainMenu : MonoBehaviour
 
     public void sons()
     {
-        ChoseLevelWindow.SetActive(true);
+        SonsWindow.SetActive(true);
+        
     }
 
     public void CloseSonsWindow()
     {
-        ChoseLevelWindow.SetActive(false);
-    }
-
-    public void Volume()
-    {
-        ChoseLevelWindow.SetActive(true);
-    }
-
-    public void CloseVolumeWindow()
-    {
-        ChoseLevelWindow.SetActive(false);
+        SonsWindow.SetActive(false);
     }
 
     public void Commande()
     {
-        ChoseLevelWindow.SetActive(true);
+        CommandeWindow.SetActive(true);
     }
 
     public void CloseCommandeWindow()
     {
-        ChoseLevelWindow.SetActive(false);
+        CommandeWindow.SetActive(false);
     }
 
+    public void Graphique()
+    {
+        GraphiqueWindow.SetActive(true);
+    }
 
+    public void CloseGraphiqueWindow()
+    {
+        GraphiqueWindow.SetActive(false);
+    }
 }

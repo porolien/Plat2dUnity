@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class EnnemyShoot : Ennemy
 {
+
     Transform EnnemyTransform;
     public Transform ProjectilePosition;
     public float AtkSpeedProjectile;
@@ -16,11 +17,13 @@ public class EnnemyShoot : Ennemy
         EnnemyTransform = GetComponent<Transform>();
         targetPlayer = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
 
+
     }
 
 
     void Update()
     {
+
         int checkX = 0;
         int checkY = 0;
         if ((targetPlayer.position.x < EnnemyTransform.position.x) && (targetPlayer.position.x - EnnemyTransform.position.x > -ymax)) 
@@ -44,8 +47,12 @@ public class EnnemyShoot : Ennemy
             Attack(checkX, checkY);
         }
         
+      
 
     }
+
+
+
     
 
     private void Attack(int checkX, int checkY)
