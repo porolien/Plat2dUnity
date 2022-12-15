@@ -228,7 +228,6 @@ public class PlayerMovement : MonoBehaviour
     private IEnumerator ChangeProjectileDirection(GameObject Projectile, int Direction)
     {
         Projectile.GetComponent<Rigidbody2D>().velocity = new Vector2(AtkSpeedProjectile * Direction * Time.fixedDeltaTime, 5f);
-        Debug.Log(Projectile.transform.localScale.x * Direction + Projectile.transform.localScale.y + Projectile.transform.localScale.z);
         Projectile.transform.rotation = Quaternion.Euler(0, 0, 45);
         yield return new WaitForSeconds(0.4f);
         Projectile.GetComponent<Rigidbody2D>().velocity = new Vector2(AtkSpeedProjectile * Direction * Time.fixedDeltaTime, 0f);
