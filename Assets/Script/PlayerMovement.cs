@@ -311,6 +311,8 @@ public class PlayerMovement : MonoBehaviour
     {
         DeadCounter.ShowDeath();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+
+
     }
     private IEnumerator DashTiming()
     {
