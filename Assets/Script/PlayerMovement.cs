@@ -26,7 +26,7 @@ public class PlayerMovement : MonoBehaviour
     public GameObject BreakableIce;
     public GameObject Quicksand;
     public GameObject Sun;
-    public bool IceToSand;
+    public bool FirstAsSand;
 
     Vector2 movement = Vector2.zero;
     public float speed = 0;
@@ -256,7 +256,7 @@ public class PlayerMovement : MonoBehaviour
         if (canChangeTime)
         {
             bool stop = false;
-            if (IceToSand)
+            if (FirstAsSand)
             {
                 Ice.SetActive(true);
                 Sand.SetActive(false);
@@ -272,10 +272,10 @@ public class PlayerMovement : MonoBehaviour
                 {
                     Sun.SetActive(false);
                 }
-                IceToSand = false;
+                FirstAsSand = false;
                 stop = true;
             }
-            if (!IceToSand && stop != true)
+            if (!FirstAsSand && stop != true)
             {
                 Ice.SetActive(false);
                 Sand.SetActive(true);
@@ -291,7 +291,7 @@ public class PlayerMovement : MonoBehaviour
                 {
                     Sun.SetActive(true);
                 }
-                IceToSand = true;
+                FirstAsSand = true;
             }
 
         }
@@ -309,7 +309,7 @@ public class PlayerMovement : MonoBehaviour
     }
     public void Die()
     {
-        //DeadCounter.ShowDeath();
+        DeadCounter.ShowDeath();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
     private IEnumerator DashTiming()
@@ -466,7 +466,11 @@ public class PlayerMovement : MonoBehaviour
         {
             hasJumped = false;
             IsBuried = true;
-            InvokeRepeating("JumpBuried", 0.2f, 0.2f);
+            InvokeRepeating("JumpBuried", 0.1f, 0.1f);
+        }
+        if(triggered.gameObject.tag == "Die" || triggered.gameObject.tag == "EnnemyProjectile" || triggered.gameObject.tag == "Ennemy")
+        {
+            Die();
         }
     }
     private void OnTriggerExit2D(Collider2D triggered)

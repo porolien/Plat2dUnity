@@ -13,6 +13,7 @@ TagManager:
   - PlayerProjectile
   - EnnemyProjectile
   - ui
+  - Die
   layers:
   - Default
   - TransparentFX

@@ -12,6 +12,7 @@ public class DeadStoryteller : MonoBehaviour
 
     void Start()
     {
+
         animation = GetComponent<Animation>();
         CounterDead.text = "" + PlayerPrefs.GetInt("deathCount");
 
