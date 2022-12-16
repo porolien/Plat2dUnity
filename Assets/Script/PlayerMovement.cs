@@ -21,6 +21,12 @@ public class PlayerMovement : MonoBehaviour
     public GameObject ProjectileSand;
     public GameObject ProjectileIce;
     public int mana;
+    public GameObject Ice;
+    public GameObject Sand;
+    public GameObject BreakableIce;
+    public GameObject Quicksand;
+    public GameObject Sun;
+    public bool IceToSand;
 
     Vector2 movement = Vector2.zero;
     public float speed = 0;
@@ -42,7 +48,7 @@ public class PlayerMovement : MonoBehaviour
     private bool Moving = false;
     private int frozedCount = 0;
     private bool CanBreakIce = false;
-
+    public bool canChangeTime = false;
 
     //private bool IsWaiting
     // Start is called before the first frame update
@@ -57,7 +63,6 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
 
-        Debug.Log(JumpWall);
         if (dashFinish == true)
         {
             if (dashKeyRight == 2)
@@ -221,32 +226,75 @@ public class PlayerMovement : MonoBehaviour
             GameObject newProjectile = Instantiate(ProjectileSand, new Vector2(ProjectilePosition.position.x, ProjectilePosition.position.y), Quaternion.identity);
             StartCoroutine(ChangeProjectileDirection(newProjectile, direction));
             mana = mana - 1;
-            Debug.Log(mana);
         }
     }
 
     private IEnumerator ChangeProjectileDirection(GameObject Projectile, int Direction)
     {
-        Projectile.GetComponent<Rigidbody2D>().velocity = new Vector2(AtkSpeedProjectile * Direction * Time.fixedDeltaTime, 5f);
-        Projectile.transform.rotation = Quaternion.Euler(0, 0, 45);
-        yield return new WaitForSeconds(0.4f);
+        
         Projectile.GetComponent<Rigidbody2D>().velocity = new Vector2(AtkSpeedProjectile * Direction * Time.fixedDeltaTime, 0f);
-        Projectile.transform.rotation = Quaternion.Euler(0, 0, 18);
-        yield return new WaitForSeconds(0.05f);
-        Projectile.GetComponent<Rigidbody2D>().velocity = new Vector2(AtkSpeedProjectile * Direction * Time.fixedDeltaTime, 0f);
-        Projectile.transform.rotation = Quaternion.Euler(0, 0, 0);
-        yield return new WaitForSeconds(0.05f);
+        changeProjectileRotation(Projectile, Direction);
+        yield return new WaitForSeconds(2f);
         Projectile.GetComponent<Rigidbody2D>().velocity = new Vector2(AtkSpeedProjectile * Direction * Time.fixedDeltaTime, 0f);
         Projectile.transform.rotation = Quaternion.Euler(0, 0, -18);
+        changeProjectileRotation(Projectile, Direction);
         yield return new WaitForSeconds(0.05f);
         Projectile.GetComponent<Rigidbody2D>().velocity = new Vector2(AtkSpeedProjectile * Direction * Time.fixedDeltaTime, -5f);
         Projectile.transform.rotation = Quaternion.Euler(0, 0, -45);
+        changeProjectileRotation(Projectile, Direction);
     }
 
-
+    void changeProjectileRotation(GameObject Projectile, int Direction)
+    {
+        if (Direction == -1)
+        {
+            Projectile.GetComponent<SpriteRenderer>().flipX = true;
+        }
+    }
     void OnChangeDay()
     {
+        if (canChangeTime)
+        {
+            bool stop = false;
+            if (IceToSand)
+            {
+                Ice.SetActive(true);
+                Sand.SetActive(false);
+                if(BreakableIce != null)
+                {
+                    BreakableIce.SetActive(true);
+                }
+                if (Quicksand != null)
+                {
+                    Quicksand.SetActive(false);
+                }
+                if(Sun != null)
+                {
+                    Sun.SetActive(false);
+                }
+                IceToSand = false;
+                stop = true;
+            }
+            if (!IceToSand && stop != true)
+            {
+                Ice.SetActive(false);
+                Sand.SetActive(true);
+                if (BreakableIce != null)
+                {
+                    BreakableIce.SetActive(false);
+                }
+                if (Quicksand != null)
+                {
+                    Quicksand.SetActive(true);
+                }
+                if (Sun != null)
+                {
+                    Sun.SetActive(true);
+                }
+                IceToSand = true;
+            }
 
+        }
     }
     void RegenMana()
     {

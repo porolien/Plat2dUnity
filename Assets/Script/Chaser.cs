@@ -8,6 +8,8 @@ public class Chaser : Ennemy
     private Transform EnnemyTransform;
     private Rigidbody2D rb = null;
     public float speed = 0;
+    public float chaseSpeed = 0;
+    public float simpleSpeed = 0;
     private bool hole = false;
     private bool wall = false;
     private bool ChasePlayer = false;
@@ -35,7 +37,7 @@ public class Chaser : Ennemy
             if (((targetPlayer.position.x < EnnemyTransform.position.x) && (targetPlayer.position.x - EnnemyTransform.position.x < -30)) || ((targetPlayer.position.x > EnnemyTransform.position.x) && (EnnemyTransform.position.x - targetPlayer.position.x < -30)))
             {
                 ChasePlayer = false;
-                speed = 5;
+                speed = simpleSpeed;
             }
             if (WalkOnWall)
             {
@@ -62,7 +64,7 @@ public class Chaser : Ennemy
     }
     void ChasePlayers()
     {
-        speed = 15;
+        speed = chaseSpeed;
         if (targetPlayer.position.x < EnnemyTransform.position.x)
         {
             if (speed > 0)

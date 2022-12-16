@@ -11,4 +11,11 @@ public class ChoixNiveau : MonoBehaviour
     {
         SceneManager.LoadScene(levelToload);
     }
+    private void OnTriggerEnter2D(Collider2D triggered)
+    {
+        if (triggered.gameObject.tag == "Player")
+        {
+            SceneManager.LoadScene(levelToload);
+        }
+    }
 }
